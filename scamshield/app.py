@@ -136,7 +136,7 @@ def plot(name):
         max_age=300
     )
 
-
+@app.get("/health")
 @app.get("/api/health")
 def health():
     return jsonify(

@@ -1,183 +1,251 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="ScamShield: explainable detection of financial scam and phishing messages.">
-<title>ScamShield | Scam & Phishing Message Detector</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z' fill='%230f9d8f'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="/static/app.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ScamShield AI - Explainable financial scam and phishing detection.">
+  <title>ScamShield AI | Security Command Center</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z' fill='%2325d6bd'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
-<header class="nav">
-  <div class="nav-in">
+<div class="app-shell">
+
+  <aside class="sidebar">
     <a class="brand" href="/" aria-label="ScamShield home">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" fill="#0f9d8f"/><path d="M8.3 12.2l2.7 2.7 4.9-5.2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>ScamShield</span>
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z"/><path d="M8.3 12.2l2.7 2.7 4.9-5.2" class="brand-check"/></svg>
+      </span>
+      <span class="brand-copy"><b>SCAMSHIELD</b><small>AI SECURITY CENTER</small></span>
     </a>
-    <nav class="tabs" role="tablist" aria-label="Sections">
-      <button role="tab" class="tab active" data-view="scan" aria-selected="true">Scan message</button>
-      <button role="tab" class="tab" data-view="batch" aria-selected="false">Bulk scan</button>
-      <button role="tab" class="tab" data-view="model" aria-selected="false">Model &amp; accuracy</button>
-      <button role="tab" class="tab" data-view="about" aria-selected="false">Safety guide</button>
+
+    <div class="side-label">WORKSPACE</div>
+    <nav class="side-nav" aria-label="Main navigation">
+      <button class="tab active" data-view="scan" role="tab" aria-selected="true">
+        <span class="nav-icon">⌕</span><span>Dashboard</span><span class="nav-dot"></span>
+      </button>
+      <button class="tab" data-view="batch" role="tab" aria-selected="false">
+        <span class="nav-icon">▤</span><span>Bulk scanner</span>
+      </button>
+      <button class="tab" data-view="model" role="tab" aria-selected="false">
+        <span class="nav-icon">◫</span><span>Model analytics</span>
+      </button>
+      <button class="tab" data-view="about" role="tab" aria-selected="false">
+        <span class="nav-icon">◇</span><span>Safety guide</span>
+      </button>
     </nav>
-  </div>
-</header>
 
-<!-- ============ SCAN ============ -->
-<main id="view-scan" class="view active">
-  <section class="hero">
-    <h1>Is this message a scam?</h1>
-    <p>Paste any SMS, WhatsApp message or email. ScamShield scores the risk, shows exactly which words and links raised it, and tells you what to do.</p>
-  </section>
-
-  <div class="grid">
-    <div class="col-main">
-      <section class="card">
-        <div class="card-head">
-          <label for="msg" class="h">Message to analyse</label>
-          <span class="count" id="count">0 / 5000</span>
-        </div>
-        <textarea id="msg" rows="6" maxlength="5000" spellcheck="false" placeholder="Paste a suspicious message here, e.g. “Dear customer, your SBI account will be blocked today. Update KYC: http://sbi-kyc.xyz/a1”"></textarea>
-        <div class="ctrl">
-          <label for="model" class="muted">Model</label>
-          <select id="model" aria-label="Choose the model"><option value="lr">Logistic Regression (fast)</option></select>
-          <span class="muted small" id="model-note"></span>
-        </div>
-        <div class="row">
-          <div class="samples">
-            <span class="muted">Try an example:</span>
-            <button class="chip" data-s="0">KYC threat</button>
-            <button class="chip" data-s="1">Prize fee</button>
-            <button class="chip" data-s="2">UPI refund</button>
-            <button class="chip" data-s="3">Digital arrest</button>
-            <button class="chip" data-s="4">Hinglish</button>
-            <button class="chip ok" data-s="5">Genuine bank alert</button>
-            <button class="chip ok" data-s="6">Genuine OTP</button>
-          </div>
-          <button class="btn primary" id="scan" type="button">
-  Scan Message
-</button>
-          <button class="btn ghost" id="clear" type="button">Clear</button>
-        </div>
-      </section>
-
-      <section class="card result" id="result" hidden aria-live="polite">
-        <div class="res-top">
-          <div class="gauge" id="gauge">
-            <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="g-bg" cx="60" cy="60" r="52"/><circle class="g-fg" id="g-fg" cx="60" cy="60" r="52"/></svg>
-            <div class="g-txt"><b id="g-num">0</b><small>risk / 100</small></div>
-          </div>
-          <div class="res-meta">
-            <span class="badge" id="badge">Likely safe</span>
-            <h2 id="res-title"></h2>
-            <p class="muted" id="res-sub"></p>
-          </div>
-        </div>
-
-        <div id="votes-wrap" hidden>
-          <h3>Model votes</h3>
-          <div class="votes" id="votes"></div>
-        </div>
-
-        <h3>Message analysis</h3>
-        <div class="marked" id="marked"></div>
-        <div class="legend">
-          <span><i class="sw high"></i>Strong scam signal</span>
-          <span><i class="sw med"></i>Scam signal</span>
-          <span><i class="sw safe"></i>Looks genuine</span>
-        </div>
-
-        <div class="two">
-          <div>
-            <h3>Why it was flagged</h3>
-            <ul class="signals" id="signals"></ul>
-          </div>
-          <div>
-            <h3>What to do</h3>
-            <ul class="advice" id="advice"></ul>
-          </div>
-        </div>
-
-        <h3>Explain this verdict</h3>
-        <div class="xp-tabs">
-          <button class="btn small" id="xp-shap" type="button">SHAP values</button>
-          <button class="btn small" id="xp-lime" type="button">LIME</button>
-          <span class="muted small" id="xp-note">Pick a method to see which words and signals pushed the score.</span>
-        </div>
-        <div id="xp-out" class="xp"></div>
-
-        <div class="feedback">
-          <span class="muted">Was this verdict right?</span>
-          <button class="btn small" id="fb-ok" type="button">Yes, correct</button>
-          <button class="btn small" id="fb-wrong" type="button">No, it's wrong</button>
-          <span class="muted" id="fb-msg" role="status"></span>
-        </div>
-      </section>
+    <div class="side-label side-label-lower">SECURITY</div>
+    <div class="sidebar-info">
+      <span class="live-indicator"></span>
+      <div><b>Analysis workspace</b><small>Ready for message review</small></div>
     </div>
 
-    <aside class="col-side">
-      <section class="card">
-        <div class="card-head"><span class="h">Recent checks</span><button class="link" id="clear-hist" type="button">Clear</button></div>
-        <ul class="history" id="history"></ul>
-        <p class="muted small" id="hist-empty">Your last checks appear here. They are stored only in this browser.</p>
-      </section>
-      <section class="card tip">
-        <span class="h">Golden rules</span>
-        <ul class="rules">
-          <li>Banks never ask for your OTP, PIN or CVV.</li>
-          <li>Police and courts never arrest over a video call.</li>
-          <li>Real prizes never charge a fee.</li>
-          <li>Report fraud fast: call <b>1930</b>.</li>
-        </ul>
-      </section>
-    </aside>
-  </div>
-</main>
-
-<!-- ============ BATCH ============ -->
-<main id="view-batch" class="view">
-  <section class="hero"><h1>Bulk scan</h1><p>Upload a CSV with a <code>text</code> column (or one message per line) and score hundreds of messages at once.</p></section>
-  <section class="card">
-    <div class="drop" id="drop">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
-      <p><b>Drop a CSV here</b> or <label class="link" for="file">browse</label></p>
-      <p class="muted small">Up to 500 messages per file</p>
-      <input type="file" id="file" accept=".csv,.txt" hidden>
+    <div class="sidebar-bottom">
+      <div class="side-shield">◆</div>
+      <p><b>Stay one step ahead.</b><br><span>Pause. Verify. Protect.</span></p>
+      <small class="side-version">SCAMSHIELD · NLP PROJECT</small>
     </div>
-    <p class="muted small center">No file handy? <button class="link" id="demo-batch" type="button">Run a demo with 8 sample messages</button></p>
-  </section>
-  <section class="card" id="batch-res" hidden>
-    <div class="sum" id="sum"></div>
-    <div class="row"><h3 style="margin:0">Results</h3><button class="btn small" id="dl" type="button">Download CSV</button></div>
-    <div class="table-wrap"><table class="tbl"><thead><tr><th>#</th><th>Message</th><th>Risk</th><th>Verdict</th><th>Likely type</th></tr></thead><tbody id="tbody"></tbody></table></div>
-  </section>
-</main>
+  </aside>
 
-<!-- ============ MODEL ============ -->
-<main id="view-model" class="view">
-  <section class="hero"><h1>Model &amp; accuracy</h1><p>How ScamShield was trained and how well it performs on messages it has never seen.</p></section>
-  <div id="model-root"><div class="card"><p class="muted">Loading model card…</p></div></div>
-</main>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="breadcrumb"><span>SCAMSHIELD</span><i>/</i><b id="page-label">Dashboard</b></div>
+      <div class="topbar-right">
+        <span class="top-status"><span class="live-indicator"></span> SYSTEM ONLINE</span>
+        <span class="top-avatar">S</span>
+      </div>
+    </header>
 
-<!-- ============ ABOUT ============ -->
-<main id="view-about" class="view">
-  <section class="hero"><h1>Safety guide</h1><p>The most common financial scams in India and how to respond.</p></section>
-  <div class="cards3">
-    <article class="card"><h3>KYC / account-block</h3><p>“Update KYC or your account is blocked.” Banks do not send links to update KYC over SMS. Visit the branch or the official app.</p></article>
-    <article class="card"><h3>UPI collect &amp; refund</h3><p>You never enter a UPI PIN to <em>receive</em> money. If a request asks for your PIN, it is taking money out.</p></article>
-    <article class="card"><h3>Prize, lottery &amp; fees</h3><p>Genuine winnings never need a processing, tax or registration fee paid first.</p></article>
-    <article class="card"><h3>Digital arrest</h3><p>No agency arrests people over video call or asks you to stay on camera. Hang up and call 1930.</p></article>
-    <article class="card"><h3>Fake delivery &amp; utility</h3><p>Messages threatening electricity, SIM or FASTag cut-off with a payment link are phishing. Check the provider's own app.</p></article>
-    <article class="card"><h3>Fake jobs &amp; investments</h3><p>Daily income for liking videos and guaranteed returns are classic task-scam and Ponzi hooks.</p></article>
+    <!-- DASHBOARD / SCAN -->
+    <main id="view-scan" class="view active page-content">
+      <section class="welcome-row">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> THREAT DETECTION WORKSPACE</div>
+          <h1>Message Security <span>Center</span></h1>
+          <p class="page-intro">Analyse suspicious messages, identify fraud signals and understand the risk before you respond.</p>
+        </div>
+        <div class="date-chip"><span class="date-dot"></span> REAL-TIME MESSAGE ANALYSIS</div>
+      </section>
+
+      <section class="overview-grid">
+        <article class="overview-card overview-primary">
+          <div class="overview-icon">⌕</div>
+          <div><small>ANALYSIS MODE</small><b>On-demand scanning</b><span>Scan only when you choose</span></div>
+          <span class="overview-arrow">↗</span>
+        </article>
+        <article class="overview-card">
+          <div class="overview-icon icon-purple">◈</div>
+          <div><small>AI APPROACH</small><b>Multi-model NLP</b><span>Text and fraud indicators</span></div>
+        </article>
+        <article class="overview-card">
+          <div class="overview-icon icon-orange">⌁</div>
+          <div><small>EXPLAINABILITY</small><b>SHAP + LIME</b><span>Understand model decisions</span></div>
+        </article>
+      </section>
+
+      <div class="workspace-grid">
+        <div class="workspace-main">
+          <section class="panel scan-panel">
+            <div class="panel-heading">
+              <div>
+                <div class="section-kicker">01 / INPUT</div>
+                <h2>Analyse a message</h2>
+                <p>Paste an SMS, WhatsApp message, UPI alert or email below.</p>
+              </div>
+              <span class="panel-tag"><span class="live-indicator"></span> READY</span>
+            </div>
+
+            <div class="input-toolbar">
+              <span class="input-label"><span class="input-label-icon">▤</span> MESSAGE CONTENT</span>
+              <span class="count" id="count">0 / 5000</span>
+            </div>
+            <textarea id="msg" rows="7" maxlength="5000" spellcheck="false" placeholder="Paste the message you want to check here...&#10;&#10;Example: Your bank account will be blocked today. Update KYC using this link..."></textarea>
+
+            <div class="sample-area">
+              <div class="sample-heading"><span>TRY A SAMPLE MESSAGE</span><small>Click to insert an example</small></div>
+              <div class="chips">
+                <button class="chip" type="button" data-s="0">Fake KYC alert</button>
+                <button class="chip" type="button" data-s="1">Prize scam</button>
+                <button class="chip" type="button" data-s="2">UPI collect request</button>
+                <button class="chip" type="button" data-s="5">Bank transaction</button>
+              </div>
+            </div>
+
+            <div class="scan-actions">
+              <div class="model-select-wrap">
+                <label for="model">AI MODEL</label>
+                <select id="model">
+                  <option value="lr">Logistic Regression</option>
+                  <option value="bigru">BiGRU</option>
+                  <option value="distilbert">DistilBERT</option>
+                </select>
+                <small id="model-note">Selected model will analyse your message.</small>
+              </div>
+              <div class="action-buttons">
+                <button class="btn ghost" id="clear" type="button">Clear</button>
+                <button class="btn primary" id="scan" type="button"><span>⌕</span> Scan Message <span class="btn-arrow">→</span></button>
+              </div>
+            </div>
+            <div class="privacy-note"><span>▣</span> Your message is analysed by the ScamShield service. Avoid entering real OTPs, PINs or passwords.</div>
+          </section>
+
+          <section class="panel result" id="result" hidden aria-live="polite">
+            <div class="panel-heading result-heading">
+              <div><div class="section-kicker">02 / DETECTION</div><h2>Threat analysis report</h2><p>Model prediction and explainable message signals.</p></div>
+              <span class="panel-tag">SCAN RESULT</span>
+            </div>
+            <div class="result-overview">
+              <div class="gauge" id="gauge">
+                <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="g-bg" cx="60" cy="60" r="52"/><circle class="g-fg" id="g-fg" cx="60" cy="60" r="52"/></svg>
+                <div class="g-txt"><b id="g-num">0</b><small>RISK / 100</small></div>
+              </div>
+              <div class="res-meta">
+                <span class="badge" id="badge">Likely safe</span>
+                <h2 id="res-title"></h2>
+                <p class="muted" id="res-sub"></p>
+              </div>
+            </div>
+            <div id="votes-wrap" hidden><h3>Model votes</h3><div class="votes" id="votes"></div></div>
+            <div class="analysis-block">
+              <h3>Message analysis</h3>
+              <p class="muted">Highlighted sections show words or patterns that influenced the result.</p>
+              <div class="marked" id="marked"></div>
+              <div class="legend"><span><i class="sw high"></i>Strong scam signal</span><span><i class="sw med"></i>Scam signal</span><span><i class="sw safe"></i>Looks genuine</span></div>
+            </div>
+            <div class="two">
+              <div class="analysis-list"><h3>Why it was flagged</h3><ul class="signals" id="signals"></ul></div>
+              <div class="analysis-list"><h3>Recommended action</h3><ul class="advice" id="advice"></ul></div>
+            </div>
+            <div class="explain-block">
+              <h3>Explain this verdict</h3>
+              <div class="xp-tabs"><button class="btn small" id="xp-shap" type="button">SHAP values</button><button class="btn small" id="xp-lime" type="button">LIME</button><span class="muted small" id="xp-note">Choose a method to inspect the model's reasoning.</span></div>
+              <div id="xp-out" class="xp"></div>
+            </div>
+            <div class="feedback">
+              <span class="muted">Was this verdict right?</span>
+              <button class="btn small" id="fb-ok" type="button">Yes, correct</button>
+              <button class="btn small" id="fb-wrong" type="button">No, it's wrong</button>
+              <span class="muted" id="fb-msg" role="status"></span>
+            </div>
+          </section>
+        </div>
+
+        <aside class="workspace-side">
+          <section class="panel recent-panel">
+            <div class="side-panel-heading"><div><div class="section-kicker">ACTIVITY</div><h3>Recent checks</h3></div><button class="link" id="clear-hist" type="button">Clear all</button></div>
+            <ul class="history" id="history"></ul>
+            <p class="muted small" id="hist-empty">Your recent checks will appear here. This list is stored in this browser.</p>
+          </section>
+          <section class="panel safety-panel">
+            <div class="safety-heading"><span class="safety-icon">✳</span><div><small>QUICK REMINDER</small><h3>Never share these</h3></div></div>
+            <div class="safety-rule"><b>OTP</b><span>One-time passwords</span></div>
+            <div class="safety-rule"><b>UPI PIN</b><span>Payment authorisation PIN</span></div>
+            <div class="safety-rule"><b>CVV</b><span>Card security code</span></div>
+            <div class="emergency-note"><b>Suspect financial fraud?</b><span>Call India's cyber fraud helpline <strong>1930</strong>.</span></div>
+          </section>
+          <section class="side-note">
+            <span class="side-note-icon">◈</span>
+            <p><b>Think before you click.</b><br>Verify links and payment requests using official channels.</p>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <!-- BULK SCAN -->
+    <main id="view-batch" class="view page-content">
+      <section class="welcome-row">
+        <div><div class="eyebrow"><span class="eyebrow-line"></span> BATCH PROCESSING</div><h1>Bulk <span>Scanner</span></h1><p class="page-intro">Screen multiple messages together using a CSV or text file.</p></div>
+        <div class="date-chip">UP TO 500 MESSAGES</div>
+      </section>
+      <section class="panel batch-panel">
+        <div class="panel-heading"><div><div class="section-kicker">01 / UPLOAD</div><h2>Upload message dataset</h2><p>Use a CSV with a <code>text</code> column, or a text file with one message per line.</p></div><span class="panel-tag">BATCH ANALYSIS</span></div>
+        <div class="drop" id="drop">
+          <div class="upload-symbol">⇧</div>
+          <h3>Drop your file here</h3>
+          <p>or <label class="link" for="file">browse files</label> from your computer</p>
+          <span class="muted small">CSV or TXT · Maximum 500 messages</span>
+          <input type="file" id="file" accept=".csv,.txt" hidden>
+        </div>
+        <p class="muted small center">Want to see how it works? <button class="link" id="demo-batch" type="button">Run a demo with 8 sample messages</button></p>
+      </section>
+      <section class="panel" id="batch-res" hidden>
+        <div class="panel-heading"><div><div class="section-kicker">02 / OUTPUT</div><h2>Batch scan results</h2></div><button class="btn small" id="dl" type="button">↓ Download CSV</button></div>
+        <div class="sum" id="sum"></div>
+        <div class="table-wrap"><table class="tbl"><thead><tr><th>#</th><th>Message</th><th>Risk</th><th>Verdict</th><th>Likely type</th></tr></thead><tbody id="tbody"></tbody></table></div>
+      </section>
+    </main>
+
+    <!-- MODEL ANALYTICS -->
+    <main id="view-model" class="view page-content">
+      <section class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> MODEL TRANSPARENCY</div><h1>Model <span>Analytics</span></h1><p class="page-intro">Explore the training approach, evaluation metrics and model comparison.</p></div><div class="date-chip">MODEL PERFORMANCE</div></section>
+      <div id="model-root"><div class="panel"><p class="muted">Loading model information...</p></div></div>
+    </main>
+
+    <!-- SAFETY GUIDE -->
+    <main id="view-about" class="view page-content">
+      <section class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> USER AWARENESS</div><h1>Financial Safety <span>Guide</span></h1><p class="page-intro">Recognise common scams and know what to do when a message looks suspicious.</p></div><div class="date-chip">STAY CYBER SAFE</div></section>
+      <div class="guide-grid">
+        <article class="panel guide-card"><span class="guide-number">01</span><h3>KYC and account-block scams</h3><p>Messages threatening account suspension unless you update KYC through an unfamiliar link are common phishing attempts. Contact your bank using its official app or website.</p></article>
+        <article class="panel guide-card"><span class="guide-number">02</span><h3>UPI collect requests</h3><p>You do not need to enter your UPI PIN to receive money. Approving an unknown collect request can send money from your account.</p></article>
+        <article class="panel guide-card"><span class="guide-number">03</span><h3>Prize and lottery scams</h3><p>Unexpected prizes that require a registration, processing or tax fee upfront are a warning sign. Do not pay to claim an unsolicited prize.</p></article>
+        <article class="panel guide-card"><span class="guide-number">04</span><h3>Digital arrest threats</h3><p>No legitimate police or court authority arrests people over a video call or demands money to avoid arrest. End the call and verify independently.</p></article>
+        <article class="panel guide-card"><span class="guide-number">05</span><h3>Fake delivery and utility alerts</h3><p>Unexpected payment links claiming your electricity, SIM, FASTag or parcel service will be blocked should be checked through the provider's official app.</p></article>
+        <article class="panel guide-card"><span class="guide-number">06</span><h3>Fake jobs and investments</h3><p>Guaranteed returns, advance fees for jobs and daily income for simple online tasks can be signs of investment or task scams.</p></article>
+      </div>
+      <section class="panel emergency-panel">
+        <div class="emergency-big">!</div>
+        <div><div class="section-kicker">IF YOU ALREADY CLICKED OR PAID</div><h2>Act quickly. Protect your account.</h2>
+          <ol class="steps"><li>Call your bank immediately and block affected cards, UPI or net banking access.</li><li>Call <b>1930</b>, India's National Cyber Crime Helpline, as soon as possible.</li><li>File a complaint at <b>cybercrime.gov.in</b> and keep screenshots and transaction details.</li><li>Change passwords for any account whose credentials you shared.</li></ol>
+          <p class="muted small">ScamShield provides a risk estimate, not proof. Always verify through official channels.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">SCAMSHIELD AI <span id="ver"></span><span>· Explainable NLP scam detection · Verify before you trust.</span></footer>
   </div>
-  <section class="card"><h3>If you already clicked or paid</h3>
-    <ol class="steps"><li>Call your bank immediately and block cards, UPI and net banking.</li><li>Call <b>1930</b> (National Cyber Crime Helpline) within the first hour: faster reports improve the chance of freezing funds.</li><li>File a complaint at <b>cybercrime.gov.in</b> and keep screenshots of the message.</li><li>Change passwords for any account whose details you shared.</li></ol>
-    <p class="muted small">ScamShield provides a risk estimate, not proof. It can be wrong, so always confirm through your bank's official channels.</p>
-  </section>
-</main>
-
-<footer class="foot">ScamShield <span id="ver"></span> · Explainable NLP scam detection · Your messages are analysed locally and are not shared.</footer>
+</div>
 <script src="/static/app.js"></script>
 </body>
 </html>

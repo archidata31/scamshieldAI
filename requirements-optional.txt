@@ -1,0 +1,2 @@
+# Optional: enables the SHAP beeswarm plot (SHAP values themselves are computed without this package)
+shap>=0.44

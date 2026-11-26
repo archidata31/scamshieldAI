@@ -1,0 +1,123 @@
+{
+  "name": "ScamShield",
+  "version": "3.0.0",
+  "trained_at": "2026-11-25T05:17:10+00:00",
+  "environment": {
+    "python": "3.12.10",
+    "scikit_learn": "1.9.1"
+  },
+  "algorithm": "Word + character TF-IDF and 19 fraud signals into class-balanced logistic regression",
+  "data": {
+    "train": 10152,
+    "test": 2501,
+    "by_source": {
+      "synthetic": 7500,
+      "sms_spam": 5153
+    },
+    "scam_ratio_train": 0.34,
+    "real_data_used": true
+  },
+  "thresholds": {
+    "suspicious": 0.6,
+    "scam": 0.85
+  },
+  "metrics": {
+    "test": {
+      "precision": 0.9948,
+      "recall": 0.8395,
+      "f1": 0.9106,
+      "roc_auc": 0.9955,
+      "pr_auc": 0.9933
+    },
+    "flagged": {
+      "precision": 0.9888,
+      "recall": 0.9596
+    },
+    "grouped_cv": {
+      "precision": 0.9006,
+      "recall": 0.8894,
+      "f1": 0.895,
+      "roc_auc": 0.986,
+      "pr_auc": 0.9765
+    },
+    "by_source": {
+      "sms_spam": {
+        "precision": 1.0,
+        "recall": 0.7966,
+        "f1": 0.8868,
+        "roc_auc": 0.9948,
+        "pr_auc": 0.9771,
+        "n": 1001
+      },
+      "synthetic": {
+        "precision": 0.9941,
+        "recall": 0.8459,
+        "f1": 0.914,
+        "roc_auc": 0.9939,
+        "pr_auc": 0.9953,
+        "n": 1500
+      }
+    },
+    "by_category_accuracy": {
+      "bank_alert": 1.0,
+      "delivery_utility": 0.9053,
+      "digital_arrest": 0.552,
+      "hinglish": 0.8073,
+      "job_invest_loan": 0.908,
+      "kyc_block": 0.9655,
+      "lottery_prize": 1.0,
+      "otp_phishing": 0.9125,
+      "personal": 1.0,
+      "real": 0.976,
+      "service": 1.0,
+      "upi_collect": 0.9889,
+      "work": 1.0
+    },
+    "confusion": {
+      "tn": 1581,
+      "fp": 4,
+      "fn": 147,
+      "tp": 769
+    }
+  },
+  "model_comparison": [
+    {
+      "model": "TF-IDF + Naive Bayes",
+      "precision": 0.7532,
+      "recall": 0.9727,
+      "f1": 0.849,
+      "roc_auc": 0.9771,
+      "pr_auc": 0.971
+    },
+    {
+      "model": "TF-IDF + Logistic Regression",
+      "precision": 0.8384,
+      "recall": 0.94,
+      "f1": 0.8863,
+      "roc_auc": 0.9623,
+      "pr_auc": 0.9371
+    },
+    {
+      "model": "TF-IDF + fraud features + Linear SVM",
+      "precision": 0.9588,
+      "recall": 0.941,
+      "f1": 0.9499,
+      "roc_auc": 0.9904,
+      "pr_auc": 0.9889
+    },
+    {
+      "model": "TF-IDF + fraud features + Logistic Regression (ScamShield)",
+      "precision": 0.9661,
+      "recall": 0.9651,
+      "f1": 0.9656,
+      "roc_auc": 0.9955,
+      "pr_auc": 0.9933
+    }
+  ],
+  "limitations": [
+    "Synthetic messages are template-generated; accuracy on them over-states real-world performance.",
+    "Public real data is mostly English promotional spam, not Indian banking fraud.",
+    "Scammers adapt: retrain regularly using the in-app feedback log.",
+    "The tool gives a risk estimate, not proof. Verify via your bank's official channels."
+  ]
+}

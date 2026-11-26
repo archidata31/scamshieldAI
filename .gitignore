@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+.venv/
+data/raw/
+data/feedback.csv
+.DS_Store
+
+# Local databases and user data
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+scamshield/app_backup.py

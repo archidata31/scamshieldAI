@@ -1,2 +1,4 @@
+
 -r requirements.txt
-waitress>=3.0
+-r requirements-deep.txt
+waitress==3.0

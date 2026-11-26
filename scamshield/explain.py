@@ -38,16 +38,34 @@ def describe_feature(name):
 
 
 # ---------------------------------------------------------------- LIME
+
 def lime_explain(proba_fn, text, num_features=10, num_samples=300):
-    """proba_fn(list[str]) -> array (n, 2) of [P(legit), P(scam)]. Returns [{word, weight}] toward 'scam'."""
+    """Generate a LIME explanation for a message."""
     try:
         from lime.lime_text import LimeTextExplainer
-    except ImportError as e:
-        raise MissingDependency("LIME is not installed. Run: pip install lime") from e
-    explainer = LimeTextExplainer(class_names=["legit", "scam"], random_state=42)
-    exp = explainer.explain_instance(text, proba_fn, num_features=num_features,
-                                     num_samples=num_samples, labels=(1,))
-    return [{"word": w, "weight": round(float(v), 4)} for w, v in exp.as_list(label=1)]
+    except ImportError:
+        import traceback
+        traceback.print_exc()
+        raise
+
+    explainer = LimeTextExplainer(
+        class_names=["legit", "scam"],
+        random_state=42
+    )
+
+    exp = explainer.explain_instance(
+        text,
+        proba_fn,
+        num_features=num_features,
+        num_samples=num_samples,
+        labels=(1,)
+    )
+
+    return [
+        {"word": w, "weight": round(float(v), 4)}
+        for w, v in exp.as_list(label=1)
+    ]
+
 
 
 # ---------------------------------------------------------------- SHAP (linear, exact)

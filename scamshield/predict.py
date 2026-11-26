@@ -124,7 +124,7 @@ class ScamShield:
             self._cache.move_to_end(key)
             return dict(self._cache[key])
         t0 = time.perf_counter()
-                wanted = self.members() if model == "ensemble" else [model]
+        wanted = self.members() if model == "ensemble" else [model]
         raw = {m: float(self.proba_by_model([text], m)[0]) for m in wanted}
         if model == "ensemble":
             if len(raw) < 2:

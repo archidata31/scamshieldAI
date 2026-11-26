@@ -1,13 +1,14 @@
-
 """ScamShield web app and JSON API.
 
     python -m scamshield.app -> http://127.0.0.1:5000
 """
 
 import csv
+import hmac
 import io
 import json
 import logging
+import os
 import threading
 import time
 from collections import defaultdict, deque
@@ -135,6 +136,7 @@ def plot(name):
         f"{name}.png",
         max_age=300
     )
+
 
 @app.get("/health")
 @app.get("/api/health")
@@ -395,7 +397,13 @@ def feedback():
 
 @app.get("/api/history")
 def history():
-    """Return the latest 100 stored scans."""
+    """Return the latest 100 stored scans (admin only)."""
+
+    key = os.environ.get("ADMIN_KEY", "")
+    sent = request.headers.get("X-Admin-Key", "")
+
+    if not key or not hmac.compare_digest(sent.encode(), key.encode()):
+        abort(404)
 
     records = storage.get_recent_scans(100)
 
